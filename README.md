@@ -2,7 +2,7 @@
 
 In this challenge you will be building a basic Pokemon Trading Card browsing app. This template is based on the Expo typescript template with added scaffolding for navigation and a library for querying Pokemon cards.
 
-> Note: We have used Expo in this template for simplicity of environment setup. You are not required to use this template for the challenge. We do not use Expo in our production app and will not expect any Expo specific knowledge/implementation in this challenge.
+> Note: We have used Expo in this template for simplicity of environment setup. You are not required to use this template for the challenge. We do not use Expo and will not expect any Expo specific knowledge/implementation in this challenge.
 
 ## Challenge
 Use design.pdf as reference for the layout of the screens, feel free to improve and expand upon the design.
@@ -13,6 +13,7 @@ Use design.pdf as reference for the layout of the screens, feel free to improve 
   - Set's logo on the left, symbol on the upper right
   - Set name, series, and a tag list of the legality keys "Unlimited", "Extended", etc.
 - Navigate to a Set's detail screen and display a list of cards in the set
+  - Pass necessary data on navigation to the detail screen
   - Header
     - Background with Set's logo behind a partial opacity black overlay, display Set Name, release date, and total number of cards in set
   - List of cards in set
@@ -26,13 +27,14 @@ Use design.pdf as reference for the layout of the screens, feel free to improve 
 ### What we are looking for in your implementation
   - Composition and reuse of components in your layouts
   - Consistent layout styling (sizing, padding, margin, color, etc)
-  - Performance considerations
+  - Performance and architectural considerations
     - Appropriate usage of hooks (useState, useEffect, useCallback, custom hooks, etc)
     - Using FlatList
     - Paging items from the API (20 items per page, and load more pages as the user scrolls)
 
 ### Bonus
   - Filter, search, and/or sort functionality
+  - Additional detail screen for Cards
   - Thoughtful use of animations & transitions (e.g. during loading or state changes)
   - Personal flourishes & additions to the app
   - Appropriate usage of Typescript
