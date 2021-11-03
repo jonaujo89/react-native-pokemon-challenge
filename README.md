@@ -37,7 +37,11 @@ Use design.pdf as reference for the layout of the screens, feel free to improve 
   - Additional detail screen for Cards
   - Thoughtful use of animations & transitions (e.g. during loading or state changes)
   - Personal flourishes & additions to the app
-  - Appropriate usage of Typescript
+  - Appropriate usage of TypeScript
+
+### Not comfortable with Typescript?
+
+Feel free to rename ts/tsx files to js/jsx and/or remove types.
 
 # TypeScript Example
 
