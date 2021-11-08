@@ -6,6 +6,7 @@ import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 
 import SetCard from "../components/SetInfoCard";
 import LoadingComponent from "../components/LoadingComponent";
+import OrderByComponent from "../components/OrderByComponent";
 
 import { theme } from "../theme";
 
@@ -17,38 +18,41 @@ const HomeScreen = () => {
   const [pageNumber, setPageNumber] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [apiLoading, setApiLoading] = useState<boolean>(false);
+  const [orderBy, setOrderBy] = useState<string>("id");
 
-  //alternative without sendGetReq
-  // const getPokemonSets = async (pageNum) => {
-  //   const sets: PokemonTCG.Set[] = await PokeTCGManager.getSets(pageNum);
-  //   setPokemonSets([...pokemonSets, ...sets]);
-  // };
+  //buttons for sorting and their api strings
+  const buttons = ["Name", "Release Date", "Series", "default"];
+  const params = ["name", "releaseDate", "series", "id"];
 
-  const getNextPage = async () => {
+  useEffect(() => {
+    const firstGet = async () => await getNextPage(1);
+    firstGet();
+    setLoading(false);
+  }, []);
+
+  //if second parameter - true - merge current state.
+  const getNextPage = async (
+    pNum?: number,
+    state?: boolean,
+    sortBy?: string
+  ) => {
     setApiLoading(true);
     await sendGetReq(
-      { pageNum: pageNumber + 1 },
+      { pageNum: pNum || pageNumber + 1, orderBy: sortBy || orderBy },
       PokeTCGManager.getSets,
       (res) => {
-        setPokemonSets([...pokemonSets, ...res]);
-        setPageNumber(pageNumber + 1);
+        setPokemonSets(state ? [...pokemonSets, ...res] : res);
+        setPageNumber(pNum + 1);
       }
     );
     setApiLoading(false);
-
-    //alternative without sendGetReq
-    // await getPokemonSets(pageNumber + 1);
-    // setPageNumber(pageNumber + 1);
   };
 
-  useEffect(() => {
-    const firstGet = async () => await getNextPage();
-    firstGet();
-    setLoading(false);
-
-    //alternative without sendGetReq
-    // getPokemonSets(pageNumber);
-  }, []);
+  const sortingHandler = async (param) => {
+    setPokemonSets([]);
+    setOrderBy(param);
+    await getNextPage(1, false, param);
+  };
 
   return (
     <>
@@ -56,12 +60,17 @@ const HomeScreen = () => {
         <LoadingComponent />
       ) : (
         <Container>
+          <OrderByComponent
+            setSortParam={sortingHandler}
+            buttons={buttons}
+            params={params}
+          />
           <FlatList
             data={pokemonSets}
             keyExtractor={(item, index) => `pokemon-set-${index}`}
             renderItem={({ item }) => <SetCard cardSet={item} />}
             onEndReachedThreshold={0.1}
-            onEndReached={getNextPage}
+            onEndReached={() => getNextPage(pageNumber, true)}
             ListFooterComponent={() =>
               apiLoading && (
                 <ActivityIndicator

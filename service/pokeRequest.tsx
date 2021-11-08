@@ -1,4 +1,12 @@
-export const sendGetReq = async (params, callback, setState) => {
+import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
+
+import { ReqType } from "../api/PokeTCGManager";
+
+export const sendGetReq = async (
+  params: ReqType,
+  callback: Promise<PokemonTCG.Set[] | PokemonTCG.Card[]>,
+  setState: any
+) => {
   try {
     const res = await callback(params);
 

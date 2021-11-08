@@ -9,6 +9,7 @@ import { RouteProps } from ".";
 import CardInfo from "../components/CardInfo";
 import SetHeader from "../components/SetHeader";
 import LoadingComponent from "../components/LoadingComponent";
+import OrderByComponent from "../components/OrderByComponent";
 
 import { AntDesign } from "@expo/vector-icons";
 import { theme } from "../theme";
@@ -28,40 +29,43 @@ const Details = () => {
   const [imageSrc, setImageSrc] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [apiLoading, setApiLoading] = useState<boolean>(false);
+  const [orderBy, setOrderBy] = useState<string>("id");
 
-  //alternative without sendGetReq
-  // const getPokemonSet = async (id: string, pageNum?: number) => {
-  //   const dataSet: PokemonTCG.Card[] = await PokeTCGManager.getCardsInSet(
-  //     setID,
-  //     pageNum
-  //   );
-  //   setCards([...cards, ...dataSet]);
-  // };
+  //buttons for sorting and their api strings
+  const buttons = ["Name", "Supertype", "default"];
+  const params = ["name", "supertype", "id"];
 
   useEffect(() => {
-    const firstGet = async () => await getNextPage();
+    const firstGet = async () => await getNextPage(1);
     firstGet();
     setLoading(false);
-
-    //alternative without sendGetReq
-    // getPokemonSet(setID);
   }, []);
 
-  const getNextPage = async () => {
+  const getNextPage = async (
+    pNum?: number,
+    state?: boolean,
+    sortBy?: string
+  ) => {
     setApiLoading(true);
     await sendGetReq(
-      { pageNum: pageNumber + 1, id: setID },
+      {
+        pageNum: pNum || pageNumber + 1,
+        id: setID,
+        orderBy: sortBy || orderBy,
+      },
       PokeTCGManager.getCardsInSet,
       (res) => {
-        setCards([...cards, ...res]);
-        setPageNumber(pageNumber + 1);
+        setCards(state ? [...cards, ...res] : res);
+        setPageNumber(pNum + 1);
       }
     );
     setApiLoading(false);
+  };
 
-    //alternative without sendGetReq
-    // await getPokemonSet(setID, pageNumber + 1);
-    // setPageNumber(pageNumber + 1);
+  const sortingHandler = async (param) => {
+    setCards([]);
+    setOrderBy(param);
+    await getNextPage(1, false, param);
   };
 
   const openModalHandler = (imgSrc) => {
@@ -75,6 +79,11 @@ const Details = () => {
 
   return (
     <Container>
+      <OrderByComponent
+        setSortParam={sortingHandler}
+        buttons={buttons}
+        params={params}
+      />
       <SetHeader
         img={cardSet.images.logo}
         name={cardSet.name}
@@ -91,7 +100,7 @@ const Details = () => {
             <CardInfo info={item} onPress={openModalHandler} />
           )}
           onEndReachedThreshold={0.2}
-          onEndReached={getNextPage}
+          onEndReached={() => getNextPage(pageNumber, true)}
           ListFooterComponent={() =>
             apiLoading && (
               <ActivityIndicator size="large" color={theme.colors.bg.loading} />

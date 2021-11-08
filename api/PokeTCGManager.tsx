@@ -1,10 +1,28 @@
 import { PokemonTCG } from "pokemon-tcg-sdk-typescript";
 
-//TODO: create types/interfaces for params
+export interface ReqGetSets {
+  pageNum: number;
+  orderBy?: string;
+}
 
-const getSets = ({ pageNum }): Promise<PokemonTCG.Set[]> => {
+export interface ReqGetCardsInSet {
+  id: string;
+  pageNum: number;
+  orderBy?: string;
+}
+
+export interface ReqType {
+  pageNum: number;
+  id?: string;
+  orderBy?: string;
+}
+
+const getSets = ({
+  pageNum,
+  orderBy = "id",
+}: ReqType): Promise<PokemonTCG.Set[]> => {
   const data: any = PokemonTCG.findSetsByQueries({
-    orderBy: "id",
+    orderBy,
     pageSize: 5,
     page: pageNum,
   })
@@ -13,10 +31,14 @@ const getSets = ({ pageNum }): Promise<PokemonTCG.Set[]> => {
   return data;
 };
 
-const getCardsInSet = ({ id, pageNum }): Promise<PokemonTCG.Card[]> => {
+const getCardsInSet = ({
+  id,
+  pageNum,
+  orderBy = "id",
+}: ReqType): Promise<PokemonTCG.Card[]> => {
   const params: PokemonTCG.Parameter = {
     q: `set.id:${id}`,
-    orderBy: "id",
+    orderBy,
     pageSize: 5,
     page: pageNum,
   };
